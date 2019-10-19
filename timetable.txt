@@ -1,49 +1,28 @@
  [{
-
-                "action": {
-
-                    "type": "text",
-
-                    "payload": "{\"button\": \"1\"}",
-
-                    "label": "Назад"
-
-                },
-
-                "color": "negative"
-
-            },
-
-	{
-
-                "action": {
-
-                    "type": "text",
-
-                    "payload": "{\"button\": \"2\"}",
-
-                    "label": "Локация"
-
-                },
-		{
-
-                "action": {
-
-                    "type": "text",
-
-                    "payload": "{\"button\": \"2\"}",
-
-                    "label": "курс"
-
-                },
-	{
-
-                "action": {
-
-                    "type": "text",
-
-                    "payload": "{\"button\": \"2\"}",
-
-                    "label": "день"
-
-                },
+ 	"action": {
+		"type": "text",
+		"payload": "{\"button\": \"1\"}",
+		"label": "Назад"
+	},
+	"color": "negative"
+},{
+	"action": {
+		"type": "text",
+		"payload": "{\"button\": \"2\"}",
+		"label": "Локация"
+	},{
+		"action": {
+			"type": "text",
+			"payload": "{\"button\": \"2\"}",
+			"label": "курс"
+		},{
+			"action": {
+				"type": "text",
+				"payload": "{\"button\": \"2\"}",
+				"label": "день"
+				},{}
+			}
+		}
+	}
+}
+		
