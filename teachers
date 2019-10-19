@@ -9,21 +9,21 @@
 	"action": {
 		"type": "text",
 		"payload": "{\"button\": \"2\"}",
-		"label": ""
+		"label": "Предыдущая"
 	},
-  	"color"=""
+  	"color"="primary"
 },{
 	"action": {
 		"type": "text",
 		"payload": "{\"button\": \"2\"}",
-		"label": ""
+		"label": "Следующая"
 	},
 	"color"="primary"
 },{
 	"action": {
 		"type": "text",
 		"payload": "{\"button\": \"2\"}",
-		"label": ""
+		"label": "[teacher_lesser]"
 	},
-        "color"="primary
+        "color"="secondary"
 }]
