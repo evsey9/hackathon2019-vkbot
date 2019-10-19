@@ -1,52 +1,29 @@
-
-
- 	"action": {
+[{
+	"action": {
 		"type": "text",
 		"payload": "{\"button\": \"1\"}"
 		"label": "Назад"
 	},
-  
-	"color": "negative"
-  
+  	"color": "negative"
 },{
 	"action": {
 		"type": "text",
 		"payload": "{\"button\": \"2\"}",
 		"label": ""
 	},
-  "color"=""
-  },
-  {
-		"action": {
-			"type": "text",
-			"payload": "{\"button\": \"2\"}",
-			"label": ""
-      
-		},
-    "color"="primary"
-    },
-    {
-			"action": {
-				"type": "text",
-				"payload": "{\"button\": \"2\"}",
-				"label": ""
-        
-				},
+  	"color"=""
+},{
+	"action": {
+		"type": "text",
+		"payload": "{\"button\": \"2\"}",
+		"label": ""
+	},
+	"color"="primary"
+},{
+	"action": {
+		"type": "text",
+		"payload": "{\"button\": \"2\"}",
+		"label": ""
+	},
         "color"="primary
-        {}
-
-
-
-			}
-
-
-
-		}
-
-
-
-	}
-
-
-
-}
+}]
