@@ -16,7 +16,7 @@ class Example(QWidget):
     def initUI(self):
 
         qbtn = QPushButton('lmao', self)
-        qbtn.clicked.connect(QCoreApplication.instance().quit)  # some function here (yup, instead of quit)
+        qbtn.clicked.connect(QCoreApplication.instance().quit)  # some function here (yup, instead of quiT)
         qbtn.resize(qbtn.sizeHint())
         qbtn.move(50, 50)
 
