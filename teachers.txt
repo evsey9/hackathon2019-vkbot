@@ -1,0 +1,29 @@
+[{
+	"action": {
+		"type": "text",
+		"payload": "{\"button\": \"1\"}"
+		"label": "Назад"
+	},
+  	"color": "negative"
+},{
+	"action": {
+		"type": "text",
+		"payload": "{\"button\": \"2\"}",
+		"label": "Предыдущая"
+	},
+  	"color"="primary"
+},{
+	"action": {
+		"type": "text",
+		"payload": "{\"button\": \"2\"}",
+		"label": "Следующая"
+	},
+	"color"="primary"
+},{
+	"action": {
+		"type": "text",
+		"payload": "{\"button\": \"2\"}",
+		"label": "[teacher_lesser]"
+	},
+        "color"="secondary"
+}]
