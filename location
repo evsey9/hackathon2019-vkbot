@@ -1,0 +1,41 @@
+[{
+    "actions": {
+      "type": "text"
+      "payload": "{\"button\": \"1\"}"
+      "label":"назад"
+     },
+     "color":"negative"
+     },
+     
+    "actions": {
+      "type": "text"
+      "payload": "{\"button\": \"1\"}"
+      "label":"[address]"
+     },
+     "color":"secondary"
+     },
+     
+    
+    "actions": {
+      "type": "text"
+      "payload": "{\"button\": \"1\"}"
+      "label":"[address]"
+     },
+     "color":"secondary"
+     },
+     
+    "actions": {
+      "type": "text"
+      "payload": "{\"button\": \"1\"}"
+      "label":"[address]"
+     },
+     "color":"secondary"
+     },
+     
+    "actions": {
+      "type": "text"
+      "payload": "{\"button\": \"1\"}"
+      "label":"следующая страница"
+     },
+     "color":"primary"
+     }
