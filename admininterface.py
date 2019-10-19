@@ -2,12 +2,17 @@ import dataset
 import PyQt5
 
 db = dataset.connect('sqlite:///botdatabase.db')
-
+try:
+    db['teachers'].drop()
+    db['groups'].drop()
+    db['addresses'].drop()
+except:
+    pass
 teachers = db['teachers']
 groups = db['groups']
 addresses = db['addresses']
 
-teachers.insert(dict(lastname="Фамилия", firstname="Имя", middlename="Отчество",
+teachers.insert(dict(lastname="Охметович", firstname="Имя", middlename="Отчество",
                            phone="89526664848", mail="mail@mail.ru", age=21))
 
 groups.insert(dict(location_id=1, day=1, time_start="10:00", time_end="18:00",
