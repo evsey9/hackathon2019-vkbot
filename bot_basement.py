@@ -77,11 +77,11 @@ def main():
                         '5': "Пятница: ",
                         '6': "Суббота: ",
                         '7': "Воскресенье: ",
-                        '8': "АА СУКА СТРАШНА ВЫРУБАЙ"
+                        '8': "АА СТРАШНА ВЫРУБАЙ"
                     }
                     for i in range(1, 7):
                         result = db.query("SELECT * FROM timerows WHERE days LIKE '%" + str(i) + "%'")
-                        didfind = False #СУКА БОЛЬШАЯ БУКВА ПИТОН ХУЙТОН ЗАЕБАЛ
+                        didfind = False 
                         result1 = []
                         for j in result:
                             if j:
