@@ -9,7 +9,7 @@ from vk_api.utils import get_random_id
 db = dataset.connect('sqlite:///botdatabase.db')
 teachers = db['teachers']
 groups = db['groups']
-address = db['addresses']
+location = db['locations']
 
 def main():
     session = requests.Session()
@@ -47,17 +47,17 @@ def main():
             elif event.text.split(' ')[0] == 'Расписание' and (len(event.text.split())) > 1:
                 msgcommand = event.text[event.text.find(' ') + 1:]
                 print(msgcommand)
-                found = address.find(name=msgcommand)
+                found = location.find(name=msgcommand)
                 didfind = False
                 for i in found:
                     if i:
                         didfind = True
                 if didfind:  # Если написали заданную фразу
                     msg = []
-                    addrtable = db.query("SELECT g.time_start, g.days, g.time_start, g.time_end, 'group_id', school.id 'address_id', school.name 'school_name', "
+                    addrtable = db.query("SELECT g.time_start, g.days, g.time_start, g.time_end, 'group_id', school.id 'location_id', school.name 'school_name', "
                                          "teach.id 'teacher_id', teach.lastname 'last_name' \n"
                                          "FROM 'groups' g\n "
-                                         "INNER JOIN 'addresses' school ON school.id = g.location_id\n "
+                                         "INNER JOIN 'locations' school ON school.id = g.location_id\n "
                                          "INNER JOIN 'teachers' teach ON teach.id = g.teacher")
 
                     timerows = db.create_table('timerows')
