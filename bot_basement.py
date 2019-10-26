@@ -6,7 +6,10 @@ import vk_api
 from vk_api import VkUpload
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
-db = dataset.connect('sqlite:///botdatabase.db')
+mysqlstr = ""
+with open("auth/mysqlauth.txt", 'r') as f:
+    mysqlstr = f.read()
+db = dataset.connect('mysql://' + mysqlstr)
 teachers = db['teachers']
 groups = db['groups']
 location = db['locations']
@@ -28,7 +31,10 @@ def main():
 
     # Авторизация группы (для групп рекомендуется использовать VkBotLongPoll):
     # при передаче token вызывать vk_session.auth не нужно
-    vk_session = vk_api.VkApi(token='e9174b770e64900fb475129addb14e6fd286ce30c4bdc794a52b2bae13487828a789e3dedb529c84cfbcd')
+    tokenstr = ""
+    with open('auth/vktoken.txt', 'r') as f:
+        tokenstr = f.read()
+    vk_session = vk_api.VkApi(token=tokenstr)
 
     vk = vk_session.get_api()
 
