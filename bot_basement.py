@@ -10,6 +10,7 @@ mysqlstr = ""
 with open("auth/mysqlauth.txt", 'r') as f:
     mysqlstr = f.read()
 db = dataset.connect('mysql://' + mysqlstr)
+
 teachers = db['teachers']
 groups = db['groups']
 location = db['locations']
@@ -60,21 +61,21 @@ def main():
                         didfind = True
                 if didfind:  # Если написали заданную фразу
                     msg = []
-                    addrtable = db.query("SELECT g.time_start, g.days, g.time_start, g.time_end, 'group_id', school.id 'location_id', school.name 'school_name', "
-                                         "teach.id 'teacher_id', teach.lastname 'last_name' \n"
-                                         "FROM 'groups' g\n "
-                                         "INNER JOIN 'locations' school ON school.id = g.location_id\n "
-                                         "INNER JOIN 'teachers' teach ON teach.id = g.teacher")
+                    loctable = db.query("SELECT g.days, g.time_start, g.time_end, g.id 'group_id', school.id 'loc_id', "
+                                        "school.name 'school_name', teach.id 'teacher_id', "
+                                        "teach.lastname 'last_name' \n"
+                                        "FROM groups AS g INNER JOIN locations school ON school.id = g.location_id \n"
+                                        "INNER JOIN teachers teach ON teach.id = g.teacher ")
 
                     timerows = db.create_table('timerows')
-                    for i in addrtable:
+                    for i in loctable:
                         if i['school_name'] == msgcommand:
                             timerows.insert(i)
                             print(i)
-                    #addrtable = db.
+                    #loctable = db.
                     print(timerows.columns)
 
-                    #print(addrtable)
+                    #print(loctable)
                     weekdays = {
                         '1': "Понедельник: ",
                         '2': "Вторник: ",
@@ -98,7 +99,13 @@ def main():
                             msg.append(weekdays[str(i)])
                             for j in result1:
                                 print(j)
-                                msg.append(j['time_start'] + '-' + j['time_end'] + ' ' + j['last_name'] + ', ')
+                                time_start = j['time_start'].split(' ')[1]
+                                time_end = j['time_end'].split(' ')[1]
+                                startzrs = 1 if len(time_start.split(':')[1]) == 1 else 0
+                                endzrs = 1 if len(time_end.split(':')[1]) == 1 else 0
+                                time_start = time_start.split(':')[0] + ':' + '0' * startzrs + time_start.split(':')[1]
+                                time_end = time_end.split(':')[0] + ':' + '0' * startzrs + time_end.split(':')[1]
+                                msg.append(time_start + '-' + time_end + ' ' + j['last_name'] + ', ')
                     print(msg)
                     db['timerows'].drop()
                     vk.messages.send(  # Отправляем сообщение
