@@ -41,11 +41,17 @@ def main():
 
     upload = VkUpload(vk_session)  # Для загрузки изображений
     longpoll = VkLongPoll(vk_session)
-
+    curcommand = ""
+    arguments = []
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW:
             k = 0
-            if event.text.split(' ')[0] == 'Расписание' and len(event.text.split()) == 1:  # Если написали заданную фразу
+            msgarr = event.text.split(' ')
+            if curcommand == "":
+                curcommand = msgarr[0]
+            if len(msgarr) > 1:
+                arguments = event.text[event.text.find(' ') + 1:].split('; ')
+            if curcommand == 'Расписание' and arguments == []:  # Если написали заданную фразу
                 vk.messages.send(  # Отправляем сообщение
                 user_id=event.user_id,
                 random_id=get_random_id(),
