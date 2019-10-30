@@ -2,6 +2,7 @@
 
 import requests
 import dataset
+import difflib
 import vk_api
 from vk_api import VkUpload
 from vk_api.longpoll import VkLongPoll, VkEventType
@@ -55,10 +56,14 @@ def main():
                     if len(msgarr) > 1:
                         arguments = event.text[event.text.find(' ') + 1:].split('; ')
                 else:
+                    msg = 'Я вас не понял, пожалуйста, повторите запрос.'
+                    matches = difflib.get_close_matches(msgarr[0].lower(), commands, 1)
+                    if matches:
+                        msg = 'Я вас не понял. Возможно, вы имели в виду ' + matches[0] + '?'
                     vk.messages.send(  # Отправляем сообщение
                         user_id=event.user_id,
                         random_id=get_random_id(),
-                        message='Я вас не понял, пожалуйста, повторите запрос.'
+                        message=msg
                     )
             else:
                 arguments = event.text.split('; ')
