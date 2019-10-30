@@ -1,4 +1,8 @@
 # hackatron
+yup, it's like being not so cool
 
-final
-property of drwoof
+lol
+
+anyways, i gonna use archlinux whatever you say
+
+19 октября
