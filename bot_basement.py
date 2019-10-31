@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#site package imports
+# site package imports
 import time
 import requests
 import dataset
@@ -11,11 +11,10 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 
 
-#custom imports
+# custom imports
 from vkbot_class.usersession import UserSession
 
 
-mysqlstr = ""
 with open("auth/mysqlauth.txt", "r") as f:
     mysqlstr = f.read()
 db = dataset.connect("mysql://" + mysqlstr)
@@ -23,6 +22,8 @@ db = dataset.connect("mysql://" + mysqlstr)
 teachers = db["teachers"]
 groups = db["groups"]
 location = db["locations"]
+
+SESSION_TIMEOUT = 300  # 5 минут
 
 def main():
     session = requests.Session()
@@ -41,7 +42,6 @@ def main():
 
     # Авторизация группы (для групп рекомендуется использовать VkBotLongPoll):
     # при передаче token вызывать vk_session.auth не нужно
-    tokenstr = ""
     with open("auth/vktoken.txt", "r") as f:
         tokenstr = f.read()
     vk_session = vk_api.VkApi(token=tokenstr)
@@ -51,12 +51,17 @@ def main():
     upload = VkUpload(vk_session)  # Для загрузки изображений
     longpoll = VkLongPoll(vk_session)
     commands = ["расписание"]
-    curcommand = ""
-    arguments = []
     user_sessions = {}
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             user_id = event.user_id
+            to_del = []
+            for user in user_sessions:
+                if time.time() - user_sessions[user].last_message_time > SESSION_TIMEOUT:
+                    to_del.append(user)
+            for i in to_del:
+                del user_sessions[i]
+            del to_del
             if user_id not in user_sessions.keys():
                 user_sessions[user_id] = UserSession(user_id, time.time())
                 user_sessions[user_id].session_variables["arguments"] = []
@@ -87,7 +92,7 @@ def main():
             if msgarr[0].lower() == "назад":
                 session_vars["curcommand"] = ""
             if session_vars["curcommand"] == "расписание":
-                if session_vars["arguments"] == []:  # Если аргументов нет
+                if not session_vars["arguments"]:  # Если аргументов нет
                     vk.messages.send(  # Отправляем сообщение
                     user_id=event.user_id,
                     random_id=get_random_id(),
