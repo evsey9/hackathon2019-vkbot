@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+#site package imports
+import time
 import requests
 import dataset
 import difflib
@@ -7,6 +9,12 @@ import vk_api
 from vk_api import VkUpload
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
+
+
+#custom imports
+from vkbot_class.usersession import UserSession
+
+
 mysqlstr = ""
 with open("auth/mysqlauth.txt", "r") as f:
     mysqlstr = f.read()
@@ -45,16 +53,25 @@ def main():
     commands = ["расписание"]
     curcommand = ""
     arguments = []
+    user_sessions = {}
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            k = 0
-            arguments = []
+            user_id = event.user_id
+            if user_id not in user_sessions.keys():
+                user_sessions[user_id] = UserSession(user_id, time.time())
+                user_sessions[user_id].session_variables["arguments"] = []
+                user_sessions[user_id].session_variables["curcommand"] = ""
+            cur_user = user_sessions[user_id]
+            session_vars = cur_user.session_variables
+            cur_user.last_message_time = time.time()
+            session_vars["arguments"] = []
             msgarr = event.text.split(" ")
-            if curcommand == "":
+            k = 0
+            if session_vars["curcommand"] == "":
                 if msgarr[0].lower() in commands:
-                    curcommand = msgarr[0].lower()
+                    session_vars["curcommand"] = msgarr[0].lower()
                     if len(msgarr) > 1:
-                        arguments = event.text[event.text.find(" ") + 1:].split("; ")
+                        session_vars["arguments"] = event.text[event.text.find(" ") + 1:].split("; ")
                 else:
                     msg = "Я вас не понял, пожалуйста, повторите запрос."
                     matches = difflib.get_close_matches(msgarr[0].lower(), commands, 1)
@@ -66,19 +83,19 @@ def main():
                         message=msg
                     )
             else:
-                arguments = event.text.split("; ")
+                session_vars["arguments"] = event.text.split("; ")
             if msgarr[0].lower() == "назад":
-                curcommand = ""
-            if curcommand == "расписание":
-                if arguments == []:  # Если аргументов нет
+                session_vars["curcommand"] = ""
+            if session_vars["curcommand"] == "расписание":
+                if session_vars["arguments"] == []:  # Если аргументов нет
                     vk.messages.send(  # Отправляем сообщение
                     user_id=event.user_id,
                     random_id=get_random_id(),
                     message="Введите школу"
                     )
                 else:
-                    print(arguments[0])
-                    found = location.find(name=arguments[0])
+                    print(session_vars["arguments"][0])
+                    found = location.find(name=session_vars["arguments"][0])
                     didfind = False
                     for i in found:
                         if i:
@@ -93,7 +110,7 @@ def main():
 
                         timerows = db.create_table("timerows")
                         for i in loctable:
-                            if i["school_name"] == arguments[0]:
+                            if i["school_name"] == session_vars["arguments"][0]:
                                 timerows.insert(i)
                                 print(i)
                         print(timerows.columns)
@@ -141,22 +158,22 @@ def main():
                             random_id=get_random_id(),
                             message="Школа не найдена. Попробуйте обратиться к списку адресов."
                         )
-            elif curcommand == "расписание":  # Если написали заданную фразу
+            elif session_vars["curcommand"] == "расписание":  # Если написали заданную фразу
                 k = 0
                 vk.messages.send(  # Отправляем сообщение
                 user_id=event.user_id,
                 random_id=get_random_id(),
                 message="5"
                 )
-                curcommand = ""
-            elif curcommand == "школа":  # Если написали заданную фразу
+                session_vars["curcommand"] = ""
+            elif session_vars["curcommand"] == "школа":  # Если написали заданную фразу
                 k = 0
                 vk.messages.send(  # Отправляем сообщение
                 user_id=event.user_id,
                 random_id=get_random_id(),
                 message="5"
                 )
-                curcommand = ""
+                session_vars["curcommand"] = ""
 
 
 if __name__ == "__main__":
