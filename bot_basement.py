@@ -20,6 +20,7 @@ from vkbot_commands.schedule import schedule
 
 with open("auth/mysqlauth.txt", "r") as f:
     mysqlstr = f.read()
+
 db = dataset.connect("mysql://" + mysqlstr)
 
 teachers = db["teachers"]
@@ -53,7 +54,9 @@ def main():
 
     upload = VkUpload(vk_session)  # Для загрузки изображений
     longpoll = VkLongPoll(vk_session)
-    commands = ["расписание"]
+    commands = {
+        "расписание": schedule
+    }
     user_sessions = {}
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
@@ -76,13 +79,13 @@ def main():
             msgarr = event.text.split(" ")
             k = 0
             if session_vars["curcommand"] == "":
-                if msgarr[0].lower() in commands:
+                if msgarr[0].lower() in commands.keys():
                     session_vars["curcommand"] = msgarr[0].lower()
                     if len(msgarr) > 1:
                         session_vars["arguments"] = event.text[event.text.find(" ") + 1:].split("; ")
                 else:
                     msg = "Я вас не понял, пожалуйста, повторите запрос."
-                    matches = difflib.get_close_matches(msgarr[0].lower(), commands, 1)
+                    matches = difflib.get_close_matches(msgarr[0].lower(), commands.keys(), 1)
                     if matches:
                         msg = "Я вас не понял. Возможно, вы имели в виду " + matches[0] + "?"
                     vk.messages.send(  # Отправляем сообщение
@@ -94,28 +97,40 @@ def main():
                 session_vars["arguments"] = event.text.split("; ")
             if msgarr[0].lower() == "назад":
                 session_vars["curcommand"] = ""
-            if session_vars["curcommand"] == "расписание":
-                returndict = schedule(session_vars["arguments"], cur_user, db)
+            if session_vars["curcommand"]:  # Обработка комманд
+                returndict = commands[session_vars["curcommand"]](session_vars["arguments"], cur_user, db)
                 if returndict["message"]:
-                    vk.messages.send(  # Отправляем сообщение
-                        user_id=event.user_id,
-                        random_id=get_random_id(),
-                        message=returndict["message"]
-                    )
+                    if returndict["keyboard"]:
+                        vk.messages.send(  # Отправляем сообщение
+                            user_id=event.user_id,
+                            random_id=get_random_id(),
+                            message=returndict["message"],
+                            keyboard=returndict["keyboard"]
+                        )
+                    else:
+                        vk.messages.send(  # Отправляем сообщение
+                            user_id=event.user_id,
+                            random_id=get_random_id(),
+                            message=returndict["message"]
+                        )
+                if returndict["new_curcommand"]:
+                    session_vars["curcommand"] = returndict["new_curcommand"]
+                if returndict["new_arguments"]:
+                    session_vars["arguments"] = returndict["new_arguments"]
             elif session_vars["curcommand"] == "расписание":  # Если написали заданную фразу
                 k = 0
                 vk.messages.send(  # Отправляем сообщение
-                user_id=event.user_id,
-                random_id=get_random_id(),
-                message="5"
+                    user_id=event.user_id,
+                    random_id=get_random_id(),
+                    message="5"
                 )
                 session_vars["curcommand"] = ""
             elif session_vars["curcommand"] == "школа":  # Если написали заданную фразу
                 k = 0
                 vk.messages.send(  # Отправляем сообщение
-                user_id=event.user_id,
-                random_id=get_random_id(),
-                message="5"
+                    user_id=event.user_id,
+                    random_id=get_random_id(),
+                    message="5"
                 )
                 session_vars["curcommand"] = ""
 
