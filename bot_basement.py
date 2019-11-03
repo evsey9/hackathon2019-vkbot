@@ -14,6 +14,9 @@ from vk_api.utils import get_random_id
 # custom imports
 from vkbot_class.usersession import UserSession
 
+# command imports
+from vkbot_commands.schedule import schedule
+
 
 with open("auth/mysqlauth.txt", "r") as f:
     mysqlstr = f.read()
