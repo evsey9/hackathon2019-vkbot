@@ -1,3 +1,5 @@
+import pytz
+import datetime
 import vk_api
 from vk_api import keyboard
 def schedule(arguments, user_session, db):
@@ -26,16 +28,18 @@ def schedule(arguments, user_session, db):
             msg = []
             loctable = db.query("SELECT g.days, g.time_start, g.time_end, g.id 'group_id', school.id 'loc_id', "
                                 "school.name 'school_name', teach.id 'teacher_id', "
-                                "teach.lastname 'last_name' \n"
+                                "teach.last_name 'last_name' \n"
                                 "FROM groups AS g INNER JOIN locations school ON school.id = g.location_id \n"
-                                "INNER JOIN teachers teach ON teach.id = g.teacher ")
-
-            timerows = db.create_table("timerows")
+                                "INNER JOIN teachers teach ON teach.id = g.teacher_id \n"
+                                "WHERE school.name = '" + session_vars["arguments"][0] + "'")
             for i in loctable:
-                if i["school_name"] == session_vars["arguments"][0]:
-                    timerows.insert(i)
-                    print(i)
-            print(timerows.columns)
+                print(i)
+            #timerows = db.query
+            #for i in loctable:
+            #    if i["school_name"] == session_vars["arguments"][0]:
+            #        timerows.insert(i)
+            #        print(i)
+            #print(timerows.columns)
 
             weekdays = {
                 "1": "Понедельник: ",
@@ -48,7 +52,13 @@ def schedule(arguments, user_session, db):
                 "8": "АА СТРАШНА ВЫРУБАЙ"
             }
             for i in range(1, 7):
-                result = db.query("SELECT * FROM timerows WHERE days LIKE '%" + str(i) + "%'")
+                result = db.query("SELECT g.days, g.time_start, g.time_end, g.id 'group_id', school.id 'loc_id', "
+                                "school.name 'school_name', teach.id 'teacher_id', "
+                                "teach.last_name 'last_name' \n"
+                                "FROM groups AS g INNER JOIN locations school ON school.id = g.location_id \n"
+                                "INNER JOIN teachers teach ON teach.id = g.teacher_id \n"
+                                "WHERE school.name = '" + session_vars["arguments"][0] + "' AND g.days LIKE '%" + str(i) + "%'")
+                # помогите :(
                 didfind = False
                 result1 = []
                 for j in result:
@@ -60,8 +70,11 @@ def schedule(arguments, user_session, db):
                     msg.append(weekdays[str(i)])
                     for j in result1:
                         print(j)
-                        time_start = j["time_start"].split(" ")[1]
-                        time_end = j["time_end"].split(" ")[1]
+                        print(type(j["time_start"]))
+                        time_start = (pytz.utc.localize(datetime.datetime.min + j["time_start"])).astimezone(pytz.timezone('Etc/GMT-5'))
+                        time_end = (pytz.utc.localize(datetime.datetime.min + j["time_end"])).astimezone(pytz.timezone('Etc/GMT-5'))
+                        time_start = time_start.strftime("%H:%M")
+                        time_end = time_end.strftime("%H:%M")
                         startzrs = 1 if len(time_start.split(":")[1]) == 1 else 0
                         endzrs = 1 if len(time_end.split(":")[1]) == 1 else 0
                         time_start = time_start.split(":")[0] + ":" + "0" * startzrs + time_start.split(":")[1]
