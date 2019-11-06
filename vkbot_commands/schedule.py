@@ -69,7 +69,8 @@ def schedule(arguments, user_session, db):
                         didfind = True
                         result1.append(j)
                 if didfind:
-                    msg.append(weekdays[str(i)])
+                    msg.append(db["daysofweek"].find_one(id=i)["name"])
+                    msg.append(' ')
                     for j in result1:
                         print(j)
                         print(type(j["time_start"]))
