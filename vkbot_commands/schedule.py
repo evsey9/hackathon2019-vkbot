@@ -26,7 +26,7 @@ def schedule(arguments, user_session, db):
                 didfind = True
         if didfind:  # Если написали заданную фразу
             msg = []
-            loctable = db.query("SELECT g.days, g.time_start, g.time_end, g.id 'group_id', school.id 'loc_id', "
+            loctable = db.query("SELECT g.time_start, g.time_end, g.id 'group_id', school.id 'loc_id', "
                                 "school.name 'school_name', teach.id 'teacher_id', "
                                 "teach.last_name 'last_name' \n"
                                 "FROM groups AS g INNER JOIN locations school ON school.id = g.location_id \n"
@@ -52,12 +52,14 @@ def schedule(arguments, user_session, db):
                 "8": "АА СТРАШНА ВЫРУБАЙ"
             }
             for i in range(1, 7):
-                result = db.query("SELECT g.days, g.time_start, g.time_end, g.id 'group_id', school.id 'loc_id', "
-                                "school.name 'school_name', teach.id 'teacher_id', "
+                result = db.query("SELECT g.time_start, g.time_end, g.id 'group_id', school.id 'loc_id', "
+                                "school.name 'school_name', teach.id 'teacher_id', dof.name 'dayofweek', "
                                 "teach.last_name 'last_name' \n"
                                 "FROM groups AS g INNER JOIN locations school ON school.id = g.location_id \n"
                                 "INNER JOIN teachers teach ON teach.id = g.teacher_id \n"
-                                "WHERE school.name = '" + session_vars["arguments"][0] + "' AND g.days LIKE '%" + str(i) + "%'")
+                                "INNER JOIN groups_days gd ON g.id = gd.group_id \n"
+                                "INNER JOIN daysofweek dof ON gd.day_id = dof.id \n"
+                                "WHERE school.name = '" + session_vars["arguments"][0] + "' AND gd.day_id = " + str(i))
                 # помогите :(
                 didfind = False
                 result1 = []
