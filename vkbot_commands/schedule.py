@@ -15,6 +15,19 @@ def schedule(arguments, user_session, db):
         "new_arguments": ""
     }
     # TEMPLATE BLOCK END
+    def school_keyboard(ot=True):
+        newkeyboard = vk_api.keyboard.VkKeyboard(one_time=ot)
+        button_list = []
+        schools = db.query("SELECT name FROM locations")
+        for i in schools:
+            button_list.append(i["name"])
+        newkeyboard.add_button("Назад", color="negative")
+        for i in range(1, len(button_list) + 1):
+            if i % 3 == 0:
+                newkeyboard.add_line()
+            newkeyboard.add_button(button_list[i - 1], color="primary")
+        return newkeyboard
+    returndict["keyboard"] = school_keyboard(False).get_keyboard()
     if not session_vars["arguments"]:  # Если аргументов нет
         returndict["message"] = "Введите школу"
     else:
@@ -54,9 +67,10 @@ def schedule(arguments, user_session, db):
             for i in range(1, 7):
                 result = db.query("SELECT g.time_start, g.time_end, g.id 'group_id', school.id 'loc_id', "
                                 "school.name 'school_name', teach.id 'teacher_id', dof.name 'dayofweek', "
-                                "teach.last_name 'last_name' \n"
+                                "teach.last_name 'last_name', subj.name 'subject_name' \n"
                                 "FROM groups AS g INNER JOIN locations school ON school.id = g.location_id \n"
                                 "INNER JOIN teachers teach ON teach.id = g.teacher_id \n"
+                                "INNER JOIN subjects subj ON subj.id = g.subject_id \n"
                                 "INNER JOIN groups_days gd ON g.id = gd.group_id \n"
                                 "INNER JOIN daysofweek dof ON gd.day_id = dof.id \n"
                                 "WHERE school.name = '" + session_vars["arguments"][0] + "' AND gd.day_id = " + str(i))
@@ -70,7 +84,7 @@ def schedule(arguments, user_session, db):
                         result1.append(j)
                 if didfind:
                     msg.append(db["daysofweek"].find_one(id=i)["name"])
-                    msg.append(' ')
+                    msg.append(': \n')
                     for j in result1:
                         print(j)
                         print(type(j["time_start"]))
@@ -82,7 +96,8 @@ def schedule(arguments, user_session, db):
                         endzrs = 1 if len(time_end.split(":")[1]) == 1 else 0
                         time_start = time_start.split(":")[0] + ":" + "0" * startzrs + time_start.split(":")[1]
                         time_end = time_end.split(":")[0] + ":" + "0" * endzrs + time_end.split(":")[1]
-                        msg.append(time_start + "-" + time_end + " " + j["last_name"] + ", ")
+                        msg.append(time_start + "-" + time_end + " " + j["subject_name"] + " " + j["last_name"] + ", ")
+                        msg.append(' \n')
             print(msg)
             db["timerows"].drop()
             returndict["message"] = "".join(msg)
