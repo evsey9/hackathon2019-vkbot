@@ -31,6 +31,18 @@ location = db["locations"]
 SESSION_TIMEOUT = 300  # 5 минут
 
 def main():
+    def commands_keyboard(ot):
+        newkeyboard = vk_api.keyboard.VkKeyboard(one_time=ot)
+        button_list = []
+        for i in commands.keys():
+            if commands[i].__name__ != "begin":
+                button_list.append(i)
+        for i in range(1, len(button_list) + 1):
+            if i % 3 == 0:
+                newkeyboard.add_line()
+            newkeyboard.add_button(button_list[i - 1], color="primary")
+        return newkeyboard
+
     session = requests.Session()
 
     # Авторизация пользователя:
@@ -56,8 +68,8 @@ def main():
     upload = VkUpload(vk_session)  # Для загрузки изображений
     longpoll = VkLongPoll(vk_session)
     commands = {
-        "расписание": schedule,
-        "начать": begin
+        "начать": begin,
+        "расписание": schedule
     }
     user_sessions = {}
     for event in longpoll.listen():
@@ -94,11 +106,12 @@ def main():
                     vk.messages.send(  # Отправляем сообщение
                         user_id=event.user_id,
                         random_id=get_random_id(),
-                        message=msg
+                        message=msg,
+                        keyboard=commands_keyboard(False).get_keyboard()
                     )
             else:
                 session_vars["arguments"] = event.text.split("; ")
-            if msgarr[0].lower() == "назад":
+            if msgarr[0].lower() == "назад" and session_vars["curcommand"] != "":
                 session_vars["curcommand"] = "начать"
 
             if session_vars["curcommand"]:  # Обработка комманд
