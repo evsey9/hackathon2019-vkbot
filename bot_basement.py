@@ -18,6 +18,7 @@ from vkbot_class.usersession import UserSession
 from vkbot_commands.schedule import schedule
 from vkbot_commands.begin import begin
 from vkbot_commands.teacher import teacher
+from vkbot_commands.subject import subject
 
 
 with open("auth/mysqlauth.txt", "r") as f:
@@ -38,10 +39,10 @@ def main():
         for i in commands.keys():
             if commands[i].__name__ != "begin":
                 button_list.append(i)
-        for i in range(1, len(button_list) + 1):
-            if i % 3 == 0:
+        for i in range(len(button_list)):
+            if i % 3 == 0 and i > 1:
                 newkeyboard.add_line()
-            newkeyboard.add_button(button_list[i - 1], color="primary")
+            newkeyboard.add_button(button_list[i], color="primary")
         return newkeyboard
 
     session = requests.Session()
@@ -71,7 +72,8 @@ def main():
     commands = {
         "начать": begin,
         "расписание": schedule,
-        "учитель": teacher
+        "учитель": teacher,
+        "предмет": subject
     }
     user_sessions = {}
     for event in longpoll.listen():

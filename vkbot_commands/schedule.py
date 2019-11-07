@@ -22,10 +22,11 @@ def schedule(arguments, user_session, db):
         for i in schools:
             button_list.append(i["name"])
         newkeyboard.add_button("Назад", color="negative")
-        for i in range(1, len(button_list) + 1):
-            if i % 3 == 0:
+        newkeyboard.add_line()
+        for i in range(len(button_list)):
+            if i % 3 == 0 and i > 0:
                 newkeyboard.add_line()
-            newkeyboard.add_button(button_list[i - 1], color="primary", payload=[button_list[i - 1]])
+            newkeyboard.add_button(button_list[i], color="primary", payload=[button_list[i]])
         return newkeyboard
     returndict["keyboard"] = school_keyboard(False).get_keyboard()
     if not session_vars["arguments"]:  # Если аргументов нет

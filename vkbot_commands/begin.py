@@ -19,10 +19,10 @@ def begin(arguments, user_session, db):
         for i in session_vars["commands"].keys():
             if session_vars["commands"][i].__name__ != "begin":
                 button_list.append(i)
-        for i in range(1, len(button_list) + 1):
-            if i % 3 == 0:
+        for i in range(len(button_list)):
+            if i % 3 == 0 and i > 1:
                 newkeyboard.add_line()
-            newkeyboard.add_button(button_list[i - 1], color="primary")
+            newkeyboard.add_button(button_list[i], color="primary")
         return newkeyboard
     returndict["message"] = "Введите запрос"
     returndict["keyboard"] = commands_keyboard(False).get_keyboard()

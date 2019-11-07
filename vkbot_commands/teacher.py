@@ -21,11 +21,12 @@ def teacher(arguments, user_session, db):
             button_list.append(i["last_name"] + " " + i["first_name"] + " " + i["middle_name"])
         newkeyboard.add_button("Назад", color="negative")
         newkeyboard.add_button("Все", color="positive")
-        for i in range(2, len(button_list) + 2):
-            if i % 3 == 0:
+        newkeyboard.add_line()
+        for i in range(len(button_list)):
+            if i % 3 == 0 and i > 0:
                 newkeyboard.add_line()
-            spl = button_list[i - 2].split(' ')
-            newkeyboard.add_button(spl[0] + " " + spl[1][0] + ". " + spl[2][0] + ".", color="primary", payload=[button_list[i - 2]])
+            spl = button_list[i].split(' ')
+            newkeyboard.add_button(spl[0] + " " + spl[1][0] + ". " + spl[2][0] + ".", color="primary", payload=[button_list[i]])
         return newkeyboard
 
     returndict["keyboard"] = teacher_keyboard(False).get_keyboard()
