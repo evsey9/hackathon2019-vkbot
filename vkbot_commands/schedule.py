@@ -25,13 +25,12 @@ def schedule(arguments, user_session, db):
         for i in range(1, len(button_list) + 1):
             if i % 3 == 0:
                 newkeyboard.add_line()
-            newkeyboard.add_button(button_list[i - 1], color="primary")
+            newkeyboard.add_button(button_list[i - 1], color="primary", payload=[button_list[i - 1]])
         return newkeyboard
     returndict["keyboard"] = school_keyboard(False).get_keyboard()
     if not session_vars["arguments"]:  # Если аргументов нет
         returndict["message"] = "Введите школу"
     else:
-        print(session_vars["arguments"][0])
         found = location.find(name=session_vars["arguments"][0])
         didfind = False
         for i in found:

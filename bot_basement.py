@@ -112,7 +112,11 @@ def main():
                         keyboard=commands_keyboard(False).get_keyboard()
                     )
             else:
-                session_vars["arguments"] = event.text.split("; ")
+                try:
+                    payload = event.extra_values["payload"]
+                    session_vars["arguments"] = payload[2:-2].split('", "')
+                except:
+                    session_vars["arguments"] = event.text.split("; ")
             if msgarr[0].lower() == "назад" and session_vars["curcommand"] != "":
                 session_vars["curcommand"] = "начать"
 

@@ -24,20 +24,23 @@ def teacher(arguments, user_session, db):
         for i in range(2, len(button_list) + 2):
             if i % 3 == 0:
                 newkeyboard.add_line()
-            newkeyboard.add_button(button_list[i - 2], color="primary", payload=["name"])
+            spl = button_list[i - 2].split(' ')
+            newkeyboard.add_button(spl[0] + " " + spl[1][0] + ". " + spl[2][0] + ".", color="primary", payload=[button_list[i - 2]])
         return newkeyboard
 
     returndict["keyboard"] = teacher_keyboard(False).get_keyboard()
     if not session_vars["arguments"]:  # Если аргументов нет
         returndict["message"] = "Введите учителя"
     else:
-        print(session_vars["arguments"][0])
         found = []
         if session_vars["arguments"][0] != "Все":
-            arg_last_name = session_vars["arguments"][0].split(' ')[0]
-            arg_first_name = session_vars["arguments"][0].split(' ')[1]
-            arg_middle_name = session_vars["arguments"][0].split(' ')[2]
-            found = teachers.find(last_name=arg_last_name, first_name=arg_first_name, middle_name=arg_middle_name)
+            if len(session_vars["arguments"][0].split(' ')) == 3:
+                arg_last_name = session_vars["arguments"][0].split(' ')[0]
+                arg_first_name = session_vars["arguments"][0].split(' ')[1]
+                arg_middle_name = session_vars["arguments"][0].split(' ')[2]
+                found = teachers.find(last_name=arg_last_name, first_name=arg_first_name, middle_name=arg_middle_name)
+            else:
+                found = []
         else:
             found = db.query("SELECT * FROM teachers")
         teachers = []
@@ -46,10 +49,11 @@ def teacher(arguments, user_session, db):
             if i:
                 teachers.append(i)
                 didfind = True
-        print(didfind)
         if didfind:  # Если написали заданную фразу
             msg = []
             for i in teachers:
                 msg.append(i["last_name"] + " " + i["first_name"] + " " + i["middle_name"] + ", телефон: " + i["phone"] + ", почта: " + i["mail"] + "\n")
-                returndict["message"] = ''.join(msg)
+                returndict["message"] = "".join(msg)
+        else:
+            returndict["message"] = 'Учитель не найден. Нажмите кнопку "все" чтобы вывести список всех учителей.'
     return returndict
