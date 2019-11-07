@@ -6,7 +6,7 @@ import requests
 import dataset
 import difflib
 import vk_api
-from vk_api import VkUpload
+from vk_api import VkUpload, keyboard
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 
@@ -16,6 +16,7 @@ from vkbot_class.usersession import UserSession
 
 # command imports
 from vkbot_commands.schedule import schedule
+from vkbot_commands.begin import begin
 
 
 with open("auth/mysqlauth.txt", "r") as f:
@@ -55,7 +56,8 @@ def main():
     upload = VkUpload(vk_session)  # Для загрузки изображений
     longpoll = VkLongPoll(vk_session)
     commands = {
-        "расписание": schedule
+        "расписание": schedule,
+        "начать": begin
     }
     user_sessions = {}
     for event in longpoll.listen():
@@ -72,6 +74,7 @@ def main():
                 user_sessions[user_id] = UserSession(user_id, time.time())
                 user_sessions[user_id].session_variables["arguments"] = []
                 user_sessions[user_id].session_variables["curcommand"] = ""
+                user_sessions[user_id].session_variables["commands"] = commands
             cur_user = user_sessions[user_id]
             session_vars = cur_user.session_variables
             cur_user.last_message_time = time.time()
@@ -96,7 +99,8 @@ def main():
             else:
                 session_vars["arguments"] = event.text.split("; ")
             if msgarr[0].lower() == "назад":
-                session_vars["curcommand"] = ""
+                session_vars["curcommand"] = "начать"
+
             if session_vars["curcommand"]:  # Обработка комманд
                 returndict = commands[session_vars["curcommand"]](session_vars["arguments"], cur_user, db)
                 if returndict["message"]:
@@ -115,6 +119,8 @@ def main():
                         )
                 if returndict["new_curcommand"]:
                     session_vars["curcommand"] = returndict["new_curcommand"]
+                    if session_vars["curcommand"] == "RESET":
+                        session_vars["curcommand"] = ""
                 if returndict["new_arguments"]:
                     session_vars["arguments"] = returndict["new_arguments"]
             elif session_vars["curcommand"] == "расписание":  # Если написали заданную фразу
