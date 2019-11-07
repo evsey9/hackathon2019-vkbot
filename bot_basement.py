@@ -17,6 +17,7 @@ from vkbot_class.usersession import UserSession
 # command imports
 from vkbot_commands.schedule import schedule
 from vkbot_commands.begin import begin
+from vkbot_commands.teacher import teacher
 
 
 with open("auth/mysqlauth.txt", "r") as f:
@@ -69,7 +70,8 @@ def main():
     longpoll = VkLongPoll(vk_session)
     commands = {
         "начать": begin,
-        "расписание": schedule
+        "расписание": schedule,
+        "учитель": teacher
     }
     user_sessions = {}
     for event in longpoll.listen():
