@@ -19,6 +19,7 @@ from vkbot_commands.schedule import schedule
 from vkbot_commands.begin import begin
 from vkbot_commands.teacher import teacher
 from vkbot_commands.subject import subject
+from vkbot_commands.school import school
 
 
 with open("auth/mysqlauth.txt", "r") as f:
@@ -73,7 +74,8 @@ def main():
         "начать": begin,
         "расписание": schedule,
         "учитель": teacher,
-        "предмет": subject
+        "предмет": subject,
+        "школа": school
     }
     user_sessions = {}
     for event in longpoll.listen():
