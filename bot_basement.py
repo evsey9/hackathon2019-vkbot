@@ -80,15 +80,16 @@ def main():
     user_sessions = {}
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+            # Новое сообщение
             user_id = event.user_id
             to_del = []
-            for user in user_sessions:
+            for user in user_sessions:  # Проверка на время последнего сообщения
                 if time.time() - user_sessions[user].last_message_time > SESSION_TIMEOUT:
                     to_del.append(user)
             for i in to_del:
                 del user_sessions[i]
             del to_del
-            if user_id not in user_sessions.keys():
+            if user_id not in user_sessions.keys():  # Создание новой сессии пользователя
                 user_sessions[user_id] = UserSession(user_id, time.time())
                 user_sessions[user_id].session_variables["arguments"] = []
                 user_sessions[user_id].session_variables["curcommand"] = ""
@@ -99,7 +100,21 @@ def main():
             session_vars["arguments"] = []
             msgarr = event.text.split(" ")
             k = 0
-            if session_vars["curcommand"] == "":
+            # Обработка обычных фраз
+            genans = db["genericanswers"].find_one(input=event.text.lower())
+            didfind = False
+            if genans:
+                didfind = True
+            if didfind:
+                msg = genans["output"]
+                vk.messages.send(  # Отправляем сообщение
+                    user_id=event.user_id,
+                    random_id=get_random_id(),
+                    message=msg,
+                )
+                del didfind
+            # Обработка комманд
+            elif session_vars["curcommand"] == "":
                 if msgarr[0].lower() in commands.keys():
                     session_vars["curcommand"] = msgarr[0].lower()
                     if len(msgarr) > 1:
