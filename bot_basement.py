@@ -20,6 +20,7 @@ from vkbot_commands.begin import begin
 from vkbot_commands.teacher import teacher
 from vkbot_commands.subject import subject
 from vkbot_commands.school import school
+from vkbot_commands.help import help
 
 
 with open("auth/mysqlauth.txt", "r") as f:
@@ -36,14 +37,17 @@ SESSION_TIMEOUT = 300  # 5 минут
 def main():
     def commands_keyboard(ot):
         newkeyboard = vk_api.keyboard.VkKeyboard(one_time=ot)
-        button_list = []
+        button_list = ["о боте"]
         for i in commands.keys():
             if commands[i].__name__ != "begin":
                 button_list.append(i)
         for i in range(len(button_list)):
             if i % 3 == 0 and i > 1:
                 newkeyboard.add_line()
-            newkeyboard.add_button(button_list[i], color="primary")
+            if button_list[i] == "справка" or button_list[i] == "о боте" :
+                newkeyboard.add_button(button_list[i], color="positive")
+            else:
+                newkeyboard.add_button(button_list[i], color="primary")
         return newkeyboard
 
     session = requests.Session()
@@ -71,6 +75,7 @@ def main():
     upload = VkUpload(vk_session)  # Для загрузки изображений
     longpoll = VkLongPoll(vk_session)
     commands = {
+        "справка": help,
         "начать": begin,
         "расписание": schedule,
         "учитель": teacher,
