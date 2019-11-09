@@ -22,6 +22,7 @@ from vkbot_commands.subject import subject
 from vkbot_commands.school import school
 from vkbot_commands.help import help
 from vkbot_commands.deactivate import deactivate
+from vkbot_commands.events import events
 
 
 with open("auth/mysqlauth.txt", "r") as f:
@@ -68,6 +69,7 @@ def main():
         "учитель": teacher,
         "предмет": subject,
         "школа": school,
+        "события": events
     }
     user_sessions = {}
     for event in longpoll.listen():
