@@ -21,6 +21,7 @@ from vkbot_commands.teacher import teacher
 from vkbot_commands.subject import subject
 from vkbot_commands.school import school
 from vkbot_commands.help import help
+from vkbot_commands.deactivate import deactivate
 
 
 with open("auth/mysqlauth.txt", "r") as f:
@@ -35,21 +36,6 @@ location = db["locations"]
 SESSION_TIMEOUT = 300  # 5 минут
 
 def main():
-    def commands_keyboard(ot):
-        newkeyboard = vk_api.keyboard.VkKeyboard(one_time=ot)
-        button_list = ["о боте"]
-        for i in commands.keys():
-            if commands[i].__name__ != "begin":
-                button_list.append(i)
-        for i in range(len(button_list)):
-            if i % 3 == 0 and i > 1:
-                newkeyboard.add_line()
-            if button_list[i] == "справка" or button_list[i] == "о боте" :
-                newkeyboard.add_button(button_list[i], color="positive")
-            else:
-                newkeyboard.add_button(button_list[i], color="primary")
-        return newkeyboard
-
     session = requests.Session()
 
     # Авторизация пользователя:
@@ -75,12 +61,13 @@ def main():
     upload = VkUpload(vk_session)  # Для загрузки изображений
     longpoll = VkLongPoll(vk_session)
     commands = {
+        "выйти": deactivate,
         "справка": help,
         "начать": begin,
         "расписание": schedule,
         "учитель": teacher,
         "предмет": subject,
-        "школа": school
+        "школа": school,
     }
     user_sessions = {}
     for event in longpoll.listen():
@@ -98,7 +85,7 @@ def main():
                 user_sessions[user_id] = UserSession(user_id, time.time())
                 user_sessions[user_id].session_variables["arguments"] = []
                 user_sessions[user_id].session_variables["curcommand"] = ""
-                user_sessions[user_id].session_variables["commands"] = commands
+                user_sessions[user_id].commands = commands
             cur_user = user_sessions[user_id]
             session_vars = cur_user.session_variables
             cur_user.last_message_time = time.time()
@@ -133,7 +120,7 @@ def main():
                         user_id=event.user_id,
                         random_id=get_random_id(),
                         message=msg,
-                        keyboard=commands_keyboard(False).get_keyboard()
+                        keyboard=cur_user.commands_keyboard(False).get_keyboard()
                     )
             else:
                 try:
