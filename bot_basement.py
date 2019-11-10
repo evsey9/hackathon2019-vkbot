@@ -35,7 +35,7 @@ teachers = db["teachers"]
 groups = db["groups"]
 location = db["locations"]
 
-SESSION_TIMEOUT = 300  # 5 минут
+SESSION_TIMEOUT = 31536000  # 1 год
 
 def main():
     session = requests.Session()
@@ -77,7 +77,16 @@ def main():
                 user_sessions[user_id] = UserSession(user_id, time.time())
                 user_sessions[user_id].session_variables["arguments"] = []
                 user_sessions[user_id].session_variables["curcommand"] = "деактивация"
+                user_sessions[user_id].session_variables["curkeyboard"] = ""
                 user_sessions[user_id].commands = commands
+                newkeyboard = vk_api.keyboard.VkKeyboard(one_time=False)
+                newkeyboard.add_button("активировать бота", color="positive", payload=["активировать бота"])
+                vk.messages.send(  # Отправляем сообщение
+                    user_id=event.user_id,
+                    random_id=get_random_id(),
+                    keyboard=newkeyboard.get_keyboard(),
+                    message=db["situationanswers"].find_one(situation="BotFirstMessage")["output"],
+                )
             cur_user = user_sessions[user_id]
             session_vars = cur_user.session_variables
             cur_user.last_message_time = time.time()
@@ -89,7 +98,7 @@ def main():
             didfind = False
             if genans:
                 didfind = True
-            if didfind:
+            if didfind and session_vars["curcommand"] == "":
                 msg = genans["output"]
                 vk.messages.send(  # Отправляем сообщение
                     user_id=event.user_id,
