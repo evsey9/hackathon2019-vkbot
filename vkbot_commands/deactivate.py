@@ -22,5 +22,5 @@ def deactivate(arguments, user_session, db):
         newkeyboard = user_session.commands_keyboard(False)
         returndict["message"] = "Ваши сообщения теперь будут восприниматься ботом."
         returndict["keyboard"] = newkeyboard.get_keyboard()
-        returndict["new_curcommand"] = "начать"
+        returndict["new_curcommand"] = "RESET"
     return returndict

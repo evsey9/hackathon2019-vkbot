@@ -42,12 +42,13 @@ def schedule(arguments, user_session, db):
             for i in range(1, 7):
                 result = db.query("SELECT g.name, g.time_start, g.time_end, g.id 'group_id', school.id 'loc_id', "
                                 "school.name 'school_name', teach.id 'teacher_id', dof.name 'dayofweek', "
-                                "teach.last_name 'last_name', subj.name 'subject_name' \n"
+                                "teach.last_name 'last_name', subj.name 'subject_name', e.description 'event_description' \n"
                                 "FROM groups AS g INNER JOIN locations school ON school.id = g.location_id \n"
                                 "INNER JOIN teachers teach ON teach.id = g.teacher_id \n"
                                 "INNER JOIN subjects subj ON subj.id = g.subject_id \n"
                                 "INNER JOIN groups_days gd ON g.id = gd.group_id \n"
                                 "INNER JOIN daysofweek dof ON gd.day_id = dof.id \n"
+                                "LEFT JOIN (SELECT * FROM events WHERE events.date_from >= now() OR events.date_to >= now()) e ON g.id = e.group_id \n"
                                 "WHERE school.name = '" + session_vars["arguments"][0] + "' AND gd.day_id = " + str(i))
                 # помогите :(
                 didfind = False
@@ -71,8 +72,11 @@ def schedule(arguments, user_session, db):
                         endzrs = 1 if len(time_end.split(":")[1]) == 1 else 0
                         time_start = time_start.split(":")[0] + ":" + "0" * startzrs + time_start.split(":")[1]
                         time_end = time_end.split(":")[0] + ":" + "0" * endzrs + time_end.split(":")[1]
-                        msg.append(j["name"] + " - " + time_start + "-" + time_end + " " + j["subject_name"] + " " + j["last_name"] + ", ")
+                        msg.append(j["name"] + " - " + time_start + "-" + time_end + " " + j["subject_name"] + " " + j["last_name"] + ". ")
+                        if "event_description" in j.keys() and j["event_description"] is not None:
+                            msg.append("Для группы может наблюдаться событие. Смотрите события. ")
                         msg.append(' \n')
+                    msg.append(' \n')
             print(msg)
             db["timerows"].drop()
             returndict["message"] = "".join(msg)
