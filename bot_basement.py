@@ -23,6 +23,7 @@ from vkbot_commands.school import school
 from vkbot_commands.help import help
 from vkbot_commands.deactivate import deactivate
 from vkbot_commands.events import events
+from vkbot_commands.signup import signup
 
 
 with open("auth/mysqlauth.txt", "r") as f:
@@ -69,7 +70,8 @@ def main():
         "учитель": teacher,
         "предмет": subject,
         "школа": school,
-        "события": events
+        "события": events,
+        "запись": signup
     }
     user_sessions = {}
     for event in longpoll.listen():
@@ -91,7 +93,7 @@ def main():
             cur_user = user_sessions[user_id]
             session_vars = cur_user.session_variables
             cur_user.last_message_time = time.time()
-            session_vars["arguments"] = []
+            #session_vars["arguments"] = []
             msgarr = event.text.split(" ")
             k = 0
             # Обработка обычных фраз
@@ -127,9 +129,10 @@ def main():
             else:
                 try:
                     payload = event.extra_values["payload"]
-                    session_vars["arguments"] = payload[2:-2].split('", "')
+                    session_vars["arguments"] += payload[2:-2].split('", "')
                 except:
-                    session_vars["arguments"] = event.text.split("; ")
+                    session_vars["arguments"] += event.text.split("; ")
+                print(session_vars["arguments"])
             if msgarr[0].lower() == "назад" and session_vars["curcommand"] != "":
                 session_vars["curcommand"] = "начать"
 
@@ -155,6 +158,10 @@ def main():
                         session_vars["curcommand"] = ""
                 if returndict["new_arguments"]:
                     session_vars["arguments"] = returndict["new_arguments"]
+                    print(returndict["new_arguments"])
+
+                else:
+                    session_vars["arguments"] = []
             elif session_vars["curcommand"] == "расписание":  # Если написали заданную фразу
                 k = 0
                 vk.messages.send(  # Отправляем сообщение
