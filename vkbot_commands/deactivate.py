@@ -1,7 +1,6 @@
 import vk_api
 from vk_api import keyboard
 def deactivate(arguments, user_session, db):
-    # TEMPLATE BLOCK
     session_vars = user_session.session_variables
     teachers = db["teachers"]
     groups = db["groups"]
@@ -12,7 +11,6 @@ def deactivate(arguments, user_session, db):
         "new_curcommand": "",
         "new_arguments": ""
     }
-    # TEMPLATE BLOCK END
     if session_vars["arguments"] == []:
         newkeyboard = vk_api.keyboard.VkKeyboard(one_time=False)
         newkeyboard.add_button("активировать бота", color="positive", payload=["активировать бота"])
