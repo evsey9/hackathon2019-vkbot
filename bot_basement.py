@@ -40,19 +40,7 @@ SESSION_TIMEOUT = 300  # 5 минут
 def main():
     session = requests.Session()
 
-    # Авторизация пользователя:
-    """
-    login, password = "python@vk.com", "mypassword"
-    vk_session = vk_api.VkApi(login, password)
-
-    try:
-        vk_session.auth(token_only=True)
-    except vk_api.AuthError as error_msg:
-        print(error_msg)
-        return
-    """
-
-    # Авторизация группы (для групп рекомендуется использовать VkBotLongPoll):
+    # Авторизация группы:
     # при передаче token вызывать vk_session.auth не нужно
     with open("auth/vktoken.txt", "r") as f:
         tokenstr = f.read()
@@ -63,7 +51,7 @@ def main():
     upload = VkUpload(vk_session)  # Для загрузки изображений
     longpoll = VkLongPoll(vk_session)
     commands = {
-        "выйти": deactivate,
+        "деактивация": deactivate,
         "справка": help,
         "начать": begin,
         "расписание": schedule,
@@ -88,7 +76,7 @@ def main():
             if user_id not in user_sessions.keys():  # Создание новой сессии пользователя
                 user_sessions[user_id] = UserSession(user_id, time.time())
                 user_sessions[user_id].session_variables["arguments"] = []
-                user_sessions[user_id].session_variables["curcommand"] = ""
+                user_sessions[user_id].session_variables["curcommand"] = "деактивация"
                 user_sessions[user_id].commands = commands
             cur_user = user_sessions[user_id]
             session_vars = cur_user.session_variables
@@ -159,26 +147,8 @@ def main():
                 if returndict["new_arguments"]:
                     session_vars["arguments"] = returndict["new_arguments"]
                     print(returndict["new_arguments"])
-
                 else:
                     session_vars["arguments"] = []
-            elif session_vars["curcommand"] == "расписание":  # Если написали заданную фразу
-                k = 0
-                vk.messages.send(  # Отправляем сообщение
-                    user_id=event.user_id,
-                    random_id=get_random_id(),
-                    message="5"
-                )
-                session_vars["curcommand"] = ""
-            elif session_vars["curcommand"] == "школа":  # Если написали заданную фразу
-                k = 0
-                vk.messages.send(  # Отправляем сообщение
-                    user_id=event.user_id,
-                    random_id=get_random_id(),
-                    message="5"
-                )
-                session_vars["curcommand"] = ""
-
 
 if __name__ == "__main__":
     main()

@@ -21,7 +21,7 @@ class UserSession:
                 newkeyboard.add_line()
             if button_list[i] == "справка" or button_list[i] == "о боте":
                 newkeyboard.add_button(button_list[i], color="positive")
-            elif button_list[i] == "выйти":
+            elif button_list[i] == "деактивация":
                 newkeyboard.add_button(button_list[i], color="negative")
             else:
                 newkeyboard.add_button(button_list[i], color="primary")

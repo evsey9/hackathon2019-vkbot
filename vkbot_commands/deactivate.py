@@ -18,7 +18,7 @@ def deactivate(arguments, user_session, db):
         newkeyboard.add_button("активировать бота", color="positive", payload=["активировать бота"])
         returndict["keyboard"] = newkeyboard.get_keyboard()
         returndict["message"] = db["situationanswers"].find_one(situation="BotDeactivated")["output"]
-    elif session_vars["arguments"] == ["активировать бота"]:
+    elif session_vars["arguments"][0].lower() == "активировать бота":
         newkeyboard = user_session.commands_keyboard(False)
         returndict["message"] = db["situationanswers"].find_one(situation="BotActivated")["output"]
         returndict["keyboard"] = newkeyboard.get_keyboard()
