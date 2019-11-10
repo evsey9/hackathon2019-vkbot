@@ -17,10 +17,10 @@ def deactivate(arguments, user_session, db):
         newkeyboard = vk_api.keyboard.VkKeyboard(one_time=False)
         newkeyboard.add_button("активировать бота", color="positive", payload=["активировать бота"])
         returndict["keyboard"] = newkeyboard.get_keyboard()
-        returndict["message"] = "Бот теперь перестанет отвечать на ваши комманды. Нажмите кнопку 'активировать бота' чтобы заного использовать бота."
+        returndict["message"] = db["situationanswers"].find_one(situation="BotDeactivated")["output"]
     elif session_vars["arguments"] == ["активировать бота"]:
         newkeyboard = user_session.commands_keyboard(False)
-        returndict["message"] = "Ваши сообщения теперь будут восприниматься ботом."
+        returndict["message"] = db["situationanswers"].find_one(situation="BotActivated")["output"]
         returndict["keyboard"] = newkeyboard.get_keyboard()
         returndict["new_curcommand"] = "RESET"
     return returndict

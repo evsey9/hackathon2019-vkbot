@@ -116,10 +116,10 @@ def main():
                     if len(msgarr) > 1:
                         session_vars["arguments"] = event.text[event.text.find(" ") + 1:].split("; ")
                 else:
-                    msg = "Я вас не понял, пожалуйста, повторите запрос."
+                    msg = db["situationanswers"].find_one(situation="NotUnderstood")["output"]
                     matches = difflib.get_close_matches(msgarr[0].lower(), commands.keys(), 1)
                     if matches:
-                        msg = "Я вас не понял. Возможно, вы имели в виду " + matches[0] + "?"
+                        msg = db["situationanswers"].find_one(situation="NotUnderstood")["output"] + matches[0] + "?"
                     vk.messages.send(  # Отправляем сообщение
                         user_id=event.user_id,
                         random_id=get_random_id(),

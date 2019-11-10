@@ -13,7 +13,7 @@ def begin(arguments, user_session, db):
         "new_arguments": ""
     }
     # TEMPLATE BLOCK END
-    returndict["message"] = "Введите запрос"
+    returndict["message"] = db["situationanswers"].find_one(situation="EnterQuery")["output"]
     returndict["keyboard"] = user_session.commands_keyboard(False).get_keyboard()
     returndict["new_curcommand"] = "RESET"
     return returndict

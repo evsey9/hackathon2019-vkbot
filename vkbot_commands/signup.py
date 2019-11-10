@@ -47,10 +47,10 @@ def signup(arguments, user_session, db):
         newkeyboard.add_button("Назад", color="negative")
         return newkeyboard
     if len(session_vars["arguments"]) == 0:
-        returndict["message"] = "Выберите предмет на который хотите записаться."
+        returndict["message"] = db["situationanswers"].find_one(situation="SignupSelectSubject")["output"]
         returndict["keyboard"] = subject_keyboard(False).get_keyboard()
     if len(session_vars["arguments"]) == 1:
-        returndict["message"] = "Выберите локацию куда хотите записаться."
+        returndict["message"] = db["situationanswers"].find_one(situation="SignupSelectLocation")["output"]
         returndict["new_arguments"] = session_vars["arguments"]
         returndict["keyboard"] = school_keyboard(False).get_keyboard()
         found = db["subjects"].find(name=session_vars["arguments"][0])
@@ -59,11 +59,11 @@ def signup(arguments, user_session, db):
             if i:
                 didfind = True
         if not didfind:
-            returndict["message"] = 'Предмет не найден. Пожалуйста, нажмите на одну из кнопок снизу.'
+            returndict["message"] = db["situationanswers"].find_one(situation="SignupSubjectNotFound")["output"]
             returndict["new_arguments"] = []
             returndict["keyboard"] = subject_keyboard(False).get_keyboard()
     if len(session_vars["arguments"]) == 2:
-        returndict["message"] = "Введите ваше полное ФИО."
+        returndict["message"] = db["situationanswers"].find_one(situation="SignupEnterName")["output"]
         returndict["new_arguments"] = session_vars["arguments"]
         returndict["keyboard"] = back_keyboard(False).get_keyboard()
         found = db["locations"].find(name=session_vars["arguments"][1])
@@ -72,22 +72,22 @@ def signup(arguments, user_session, db):
             if i:
                 didfind = True
         if not didfind:
-            returndict["message"] = 'Школа не найдена. Пожалуйста, нажмите на одну из кнопок снизу.'
+            returndict["message"] = db["situationanswers"].find_one(situation="SignupSchoolNotFound")["output"]
             returndict["new_arguments"] = session_vars["arguments"][:1]
             returndict["keyboard"] = school_keyboard(False).get_keyboard()
     if len(session_vars["arguments"]) == 3:
-        returndict["message"] = "Введите какую-либо дополнительную информацию (желательно контактные данные)."
+        returndict["message"] = db["situationanswers"].find_one(situation="SignupEnterNotes")["output"]
         returndict["new_arguments"] = session_vars["arguments"]
         returndict["keyboard"] = back_keyboard(False).get_keyboard()
         didfind = False
         if len(session_vars["arguments"][2].split(' ')) >= 3:
             didfind = True
         if not didfind:
-            returndict["message"] = 'Пожалуйста, введите ФИО в формате Фамилия Имя Отчество, с пробелами.'
+            returndict["message"] = db["situationanswers"].find_one(situation="SignupNameWrong")["output"]
             returndict["new_arguments"] = session_vars["arguments"][:2]
             returndict["keyboard"] = back_keyboard(False).get_keyboard()
     if len(session_vars["arguments"]) == 4:
-        returndict["message"] = "Мы свяжемся с вами позже для уточнения записи."
+        returndict["message"] = db["situationanswers"].find_one(situation="SignupOver")["output"]
         returndict["new_curcommand"] = "RESET"
         returndict["keyboard"] = user_session.commands_keyboard(False).get_keyboard()
         subject_str = session_vars["arguments"][0]

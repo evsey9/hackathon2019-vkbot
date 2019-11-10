@@ -74,7 +74,7 @@ def schedule(arguments, user_session, db):
                         time_end = time_end.split(":")[0] + ":" + "0" * endzrs + time_end.split(":")[1]
                         msg.append(j["name"] + " - " + time_start + "-" + time_end + " " + j["subject_name"] + " " + j["last_name"] + ". ")
                         if "event_description" in j.keys() and j["event_description"] is not None:
-                            msg.append("Для группы может наблюдаться событие. Смотрите события. ")
+                            msg.append(db["situationanswers"].find_one(situation="GroupHasEvent")["output"])
                         msg.append(' \n')
                     msg.append(' \n')
             print(msg)
