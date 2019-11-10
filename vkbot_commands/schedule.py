@@ -30,7 +30,7 @@ def schedule(arguments, user_session, db):
         return newkeyboard
     returndict["keyboard"] = school_keyboard(False).get_keyboard()
     if not session_vars["arguments"]:  # Если аргументов нет
-        returndict["message"] = "Введите школу"
+        returndict["message"] = db["commands"].find_one(name=session_vars["curcommand"])["no_argument_response"]
     else:
         found = location.find(name=session_vars["arguments"][0])
         didfind = False
@@ -81,5 +81,5 @@ def schedule(arguments, user_session, db):
             db["timerows"].drop()
             returndict["message"] = "".join(msg)
         else:
-            returndict["message"] = "Школа не найдена. Попробуйте обратиться к списку адресов."
+            returndict["message"] = db["commands"].find_one(name=session_vars["curcommand"])["not_found_response"]
     return returndict

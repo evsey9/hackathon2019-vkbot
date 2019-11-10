@@ -30,7 +30,7 @@ def help(arguments, user_session, db):
 
     returndict["keyboard"] = command_help_keyboard(False).get_keyboard()
     if not session_vars["arguments"]:  # Если аргументов нет
-        returndict["message"] = "Введите название команды"
+        returndict["message"] = db["commands"].find_one(name=session_vars["curcommand"])["no_argument_response"]
     else:
         found = []
         if session_vars["arguments"][0] != "Все":
@@ -49,5 +49,5 @@ def help(arguments, user_session, db):
                 msg.append(i["name"] + " - " + i["description"] + "\n\n")
                 returndict["message"] = "".join(msg)
         else:
-            returndict["message"] = 'Команда не найдена. Нажмите кнопку "все" чтобы вывести список всех команд.'
+            returndict["message"] = db["commands"].find_one(name=session_vars["curcommand"])["not_found_response"]
     return returndict

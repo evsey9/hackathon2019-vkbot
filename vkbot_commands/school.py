@@ -30,7 +30,7 @@ def school(arguments, user_session, db):
 
     returndict["keyboard"] = school_keyboard(False).get_keyboard()
     if not session_vars["arguments"]:  # Если аргументов нет
-        returndict["message"] = "Введите название школы"
+        returndict["message"] = db["commands"].find_one(name=session_vars["curcommand"])["no_argument_response"]
     else:
         found = []
         if session_vars["arguments"][0] != "Все":
@@ -49,5 +49,5 @@ def school(arguments, user_session, db):
                 msg.append(i["name"] + " - " + i["street"] + " " + i["building"] + "\n")
                 returndict["message"] = "".join(msg)
         else:
-            returndict["message"] = 'Школа не найден. Нажмите кнопку "все" чтобы вывести список всех школ.'
+            returndict["message"] = db["commands"].find_one(name=session_vars["curcommand"])["not_found_response"]
     return returndict
