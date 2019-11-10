@@ -51,15 +51,15 @@ def main():
     upload = VkUpload(vk_session)  # Для загрузки изображений
     longpoll = VkLongPoll(vk_session)
     commands = {
-        "деактивация": deactivate,
-        "справка": help,
-        "начать": begin,
-        "расписание": schedule,
-        "учитель": teacher,
-        "предмет": subject,
-        "школа": school,
-        "события": events,
-        "запись": signup
+        "начать": begin,  # НЕ ИЗМЕНЯТЬ
+        db["commands"].find_one(id=8)["name"]: deactivate,
+        db["commands"].find_one(id=5)["name"]: help,
+        db["commands"].find_one(id=1)["name"]: schedule,
+        db["commands"].find_one(id=2)["name"]: teacher,
+        db["commands"].find_one(id=3)["name"]: subject,
+        db["commands"].find_one(id=4)["name"]: school,
+        db["commands"].find_one(id=7)["name"]: events,
+        db["commands"].find_one(id=6)["name"]: signup
     }
     user_sessions = {}
     for event in longpoll.listen():
@@ -79,6 +79,8 @@ def main():
                 user_sessions[user_id].session_variables["curcommand"] = "деактивация"
                 user_sessions[user_id].session_variables["curkeyboard"] = ""
                 user_sessions[user_id].commands = commands
+                user_sessions[user_id].commands_positive = [db["commands"].find_one(id=5)["name"], "о боте"]
+                user_sessions[user_id].commands_negative = [db["commands"].find_one(id=8)["name"]]
                 newkeyboard = vk_api.keyboard.VkKeyboard(one_time=False)
                 newkeyboard.add_button("активировать бота", color="positive", payload=["активировать бота"])
                 vk.messages.send(  # Отправляем сообщение
@@ -91,7 +93,7 @@ def main():
             session_vars = cur_user.session_variables
             cur_user.last_message_time = time.time()
             #session_vars["arguments"] = []
-            msgarr = event.text.split(" ")
+            msgarr = [event.text]
             k = 0
             # Обработка обычных фраз
             genans = db["genericanswers"].find_one(input=event.text.lower())

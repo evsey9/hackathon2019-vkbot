@@ -5,7 +5,8 @@ class UserSession:
     last_message_time = 0
     session_variables = {}
     commands = {}
-
+    commands_positive = []
+    commands_negative = []
     def __init__(self, user_id, last_message_time):
         self.user_id = user_id
         self.last_message_time = last_message_time
@@ -19,9 +20,9 @@ class UserSession:
         for i in range(len(button_list)):
             if i % 3 == 0 and i > 1:
                 newkeyboard.add_line()
-            if button_list[i] == "справка" or button_list[i] == "о боте":
+            if button_list[i] in self.commands_positive:
                 newkeyboard.add_button(button_list[i], color="positive")
-            elif button_list[i] == "деактивация":
+            elif button_list[i] in self.commands_negative:
                 newkeyboard.add_button(button_list[i], color="negative")
             else:
                 newkeyboard.add_button(button_list[i], color="primary")
