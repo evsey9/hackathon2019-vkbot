@@ -64,8 +64,8 @@ def schedule(arguments, user_session, db):
                     for j in result1:
                         print(j)
                         print(type(j["time_start"]))
-                        time_start = (pytz.utc.localize(datetime.datetime.min + j["time_start"])).astimezone(pytz.timezone('Etc/GMT-5'))
-                        time_end = (pytz.utc.localize(datetime.datetime.min + j["time_end"])).astimezone(pytz.timezone('Etc/GMT-5'))
+                        time_start = (pytz.timezone('Etc/GMT-5').localize(datetime.datetime.min + j["time_start"])).astimezone(pytz.timezone('Etc/GMT-5'))
+                        time_end = (pytz.timezone('Etc/GMT-5').localize(datetime.datetime.min + j["time_end"])).astimezone(pytz.timezone('Etc/GMT-5'))
                         time_start = time_start.strftime("%H:%M")
                         time_end = time_end.strftime("%H:%M")
                         startzrs = 1 if len(time_start.split(":")[1]) == 1 else 0

@@ -27,8 +27,8 @@ def events(arguments, user_session, db):
     msg = []
     if didfind:  # Если написали заданную фразу
         for i in eventss:
-            date_from = (pytz.utc.localize(i["date_from"])).astimezone(pytz.timezone('Etc/GMT-5'))
-            date_to = (pytz.utc.localize(i["date_to"])).astimezone(pytz.timezone('Etc/GMT-5'))
+            date_from = (pytz.timezone('Etc/GMT-5').localize(i["date_from"])).astimezone(pytz.timezone('Etc/GMT-5'))
+            date_to = (pytz.timezone('Etc/GMT-5').localize(i["date_to"])).astimezone(pytz.timezone('Etc/GMT-5'))
             if "group_name" in i.keys() and i["group_name"] is not None:
                 msg.append(i["group_name"] + " - ")
             msg.append(i["name"] + " c " + str(date_from).split("+")[0] + " на " + str(date_to).split("+")[0] + ". " + i["description"] + "\n")
