@@ -71,6 +71,7 @@ def main():
             del to_del
             if user_id not in user_sessions.keys():  # Создание новой сессии пользователя
                 user_sessions[user_id] = UserSession(user_id, time.time())
+                user_sessions[user_id].session_variables = {}.copy()
                 user_sessions[user_id].session_variables["arguments"] = []
                 user_sessions[user_id].session_variables["curcommand"] = "деактивация"
                 user_sessions[user_id].session_variables["curkeyboard"] = ""
