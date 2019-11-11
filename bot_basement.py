@@ -31,10 +31,6 @@ with open("auth/mysqlauth.txt", "r") as f:
 
 db = dataset.connect("mysql://" + mysqlstr)
 
-teachers = db["teachers"]
-groups = db["groups"]
-location = db["locations"]
-
 SESSION_TIMEOUT = 31536000  # 1 год
 
 def main():
@@ -132,7 +128,7 @@ def main():
                 except:
                     session_vars["arguments"] += event.text.split("; ")
                 print(session_vars["arguments"])
-            if msgarr[0].lower() == "назад" and session_vars["curcommand"] != "":
+            if msgarr[0].lower() == "назад" and session_vars["curcommand"] != "" and session_vars["curcommand"] != db["commands"].find_one(id=8)["name"]:
                 session_vars["curcommand"] = "начать"
 
             if session_vars["curcommand"]:  # Обработка комманд

@@ -3,9 +3,6 @@ from vk_api import keyboard
 def teacher(arguments, user_session, db):
     # TEMPLATE BLOCK
     session_vars = user_session.session_variables
-    teachers = db["teachers"]
-    groups = db["groups"]
-    location = db["locations"]
     returndict = {
         "message": "",
         "keyboard": "",
@@ -39,7 +36,7 @@ def teacher(arguments, user_session, db):
                 arg_last_name = session_vars["arguments"][0].split(' ')[0]
                 arg_first_name = session_vars["arguments"][0].split(' ')[1]
                 arg_middle_name = session_vars["arguments"][0].split(' ')[2]
-                found = teachers.find(last_name=arg_last_name, first_name=arg_first_name, middle_name=arg_middle_name)
+                found = db["teachers"].find(last_name=arg_last_name, first_name=arg_first_name, middle_name=arg_middle_name)
             else:
                 found = []
         else:
@@ -53,7 +50,12 @@ def teacher(arguments, user_session, db):
         if didfind:  # Если написали заданную фразу
             msg = []
             for i in teachers:
-                msg.append(i["last_name"] + " " + i["first_name"] + " " + i["middle_name"] + ", телефон: " + i["phone"] + ", почта: " + i["mail"] + "\n")
+                msg.append(i["last_name"] + " " + i["first_name"] + " " + i["middle_name"])
+                if "phone" in i.keys() and i["phone"] is not None:
+                    msg.append(", телефон: " + i["phone"])
+                if "mail" in i.keys() and i["mail"] is not None:
+                    msg.append(", почта: " + i["mail"])
+                msg.append("\n")
                 returndict["message"] = "".join(msg)
         else:
             returndict["message"] = db["commands"].find_one(name=session_vars["curcommand"])["not_found_response"]
