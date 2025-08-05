@@ -9,3 +9,6 @@ To change information about the schedules, locations and so on, this repository 
 # Building
 Use a virtual environment with requirements from requirements.txt and run bot_basement.py
 
+Warning: This code has not been maintained for a long, long time.
+
+
